@@ -8,29 +8,29 @@ datasource db {
 }
 
 model User {
-    id                Int      @id @default(autoincrement())
+    id                Int           @id @default(autoincrement())
     fname             String
     lname             String
-    phone             String   @unique
-    birthday          DateTime @db.Date
+    phone             String        @unique
+    birthday          DateTime      @db.Date
     password          String
     avatar_url        String?
-    registration_date DateTime @default(now()) @db.Date
-    orders            Order[]
+    registration_date DateTime      @default(now()) @db.Date
+    tickets           ticketOrder[]
 }
 
 model Ticket {
-    id             Int      @id @default(autoincrement())
+    id             Int           @id @default(autoincrement())
     from_location  String
     to_location    String
-    departure_date DateTime @db.Date
-    arrival_date   DateTime @db.Date
+    departure_date DateTime      @db.Date
+    arrival_date   DateTime      @db.Date
     unit_price     Float
     count          Int
-    passengers     Order[]
+    passengers     ticketOrder[]
 }
 
-model Order {
+model ticketOrder {
     id                Int      @id @default(autoincrement())
     User              User     @relation(fields: [userId], references: [id])
     userId            Int
@@ -41,7 +41,7 @@ model Order {
 }
 
 enum Status {
-    paid
-    canceled
-    reserved
+    PAID
+    CANCELED
+    RESERVED
 }
