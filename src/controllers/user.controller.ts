@@ -1,5 +1,6 @@
 import UserService from "../services/user.service";
 import { Request, Response, NextFunction } from "express";
+import * as bcrypt from "bcrypt";
 
 class UserController {
   private userService: UserService;
@@ -24,6 +25,37 @@ class UserController {
       next(error);
     }
   }
+
+  async userExists(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { phone } = req.params;
+      if (this.userService.userExists(phone)) {
+        return res.status(200).send("this user exists");
+      } else {
+        return res.status(404).send("user not found");
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async createUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { password } = req.body;
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      const userId = await this.userService.createUser({
+        ...req.body,
+        password: hashedPassword,
+      });
+      return res.status(201).send({
+        userId,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;

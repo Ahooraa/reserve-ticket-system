@@ -26,15 +26,33 @@ class UserService {
       throw new Error("Unable to fetch user");
     }
   }
-  
+  async userExists(phone: string): Promise<Boolean> {
+    try {
+      const user = await db.user.findUnique({ where: { phone } });
+      if (!user) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 
-  async createUser(){
-
+  async createUser(data) {
+    try {
+      const user = await db.user.create({
+        data,
+      });
+      return user.id;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
   async deleteUserById(id: string): Promise<void> {
     try {
       await db.user.delete({
-        where: {id},
+        where: { id },
       });
     } catch (error) {
       throw new Error("Unable to delete user");
