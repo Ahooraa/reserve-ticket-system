@@ -1,4 +1,5 @@
-export default interface IUser {
+ import {User} from '../db'
+ interface IUser extends User {
   fname: string;
   lname: string;
   phone: string;
@@ -8,3 +9,5 @@ export default interface IUser {
   registration_date: Date;
   // orders: Order[]
 }
+
+export default IUser
