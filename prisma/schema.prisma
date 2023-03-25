@@ -33,7 +33,7 @@ model Ticket {
     unit_price     Float
     stock          Int
 
-    orders tickestOnOrders[]
+    orders TickestOnOrders[]
 }
 
 model Order {
@@ -46,10 +46,10 @@ model Order {
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 
-    tickets tickestOnOrders[]
+    tickets TickestOnOrders[]
 }
 
-model tickestOnOrders {
+model TickestOnOrders {
     Ticket   Ticket @relation(fields: [ticketId], references: [id])
     ticketId String
     Order    Order  @relation(fields: [orderId], references: [id])
