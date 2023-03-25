@@ -1,19 +1,20 @@
-import prisma  from '../db';
-import { PrismaClient } from '@prisma/client';
-import User from './user.interface'
-class UserService {
-    private prismaConnection: PrismaClient
-    constructor (){
-        this.prismaConnection= prisma;
-    }
+import { db, User,ticketOrder } from "../db";
+import IUser from "../interfaces/user.interface";
+// import { PrismaClient } from "@prisma/client";
 
-    async getAllUsers():Promise<User[]>{
-        try {
-            return await this.prismaConnection.user.findMany({})
-        } catch (error) {
-            
-        }
+class UserService {
+//   private db: PrismaClient;
+  constructor() {
+    // this.db = db;
+  }
+
+  async getAllUsers(): Promise<IUser[]> {
+    try {
+      return await db.user.findMany()
+    } catch (error) {
+        throw new Error(error.message)
     }
+  }
 }
 
-export default UserService
+export default UserService;
