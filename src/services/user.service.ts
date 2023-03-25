@@ -1,18 +1,20 @@
-import { db, User,ticketOrder } from "../db";
-import IUser from "../interfaces/user.interface";
-// import { PrismaClient } from "@prisma/client";
+import { db, User, Order, tickestOnOrders } from "../db";
+import { PrismaClient } from "@prisma/client";
 
 class UserService {
-//   private db: PrismaClient;
+    private db: PrismaClient;
   constructor() {
-    // this.db = db;
+    this.db = db;
   }
 
-  async getAllUsers(): Promise<IUser[]> {
+  async getAllUsers(): Promise<User[]> {
     try {
-      return await db.user.findMany()
+      console.log("in user service");
+      
+      return await this.db.user.findMany();
     } catch (error) {
-        throw new Error(error.message)
+      error.status=500
+      throw new Error("Unable to fetch users");
     }
   }
 }

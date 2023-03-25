@@ -4,15 +4,16 @@ import { Request, Response, NextFunction } from "express";
 class UserController {
   private userService: UserService;
   constructor() {
-    this.userService = new UserService();
+    this.userService = new UserService;
   }
 
   async getAllUsers(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log("in user controller");
+
       const users = await this.userService.getAllUsers();
       return res.json(users);
     } catch (error) {
-      error.status = 500;
       next(error);
     }
   }
