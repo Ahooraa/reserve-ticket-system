@@ -12,6 +12,7 @@ class ExpressLoader {
     router(apiRoute);
 
     this.app.use("/api", apiRoute);
+    
     this.app.get("/error", (req: express.Request, res: express.Response) => {
       throw new Error("Error rokh dad");
     });
