@@ -26,6 +26,15 @@ class UserService {
       throw new Error("Unable to fetch user");
     }
   }
+  async getByPhone(phone: string): Promise<User> {
+    try {
+      return await this.database.user.findUnique({
+        where: { phone },
+      });
+    } catch (error) {
+      throw new Error("Unable to fetch user");
+    }
+  }
   async userExists(phone: string): Promise<Boolean> {
     try {
       const user = await db.user.findUnique({ where: { phone } });
