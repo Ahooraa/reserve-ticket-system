@@ -21,7 +21,7 @@ model User {
     createdAt         DateTime @default(now())
     updatedAt         DateTime @updatedAt
 
-    orders Order[]
+    tickets Order[]
 }
 
 model Ticket {
@@ -33,29 +33,20 @@ model Ticket {
     unit_price     Float
     stock          Int
 
-    orders TickestOnOrders[]
+    passengers Order[]
 }
 
 model Order {
     id          String   @id @default(cuid())
     User        User     @relation(fields: [userId], references: [id])
     userId      String
-    count       Int //number of tickets that a user wants to buy??
+    Ticket      Ticket   @relation(fields: [ticketId], references: [id])
+    ticketId    String
+    count       Int
     total_price Float
     status      Status
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
-
-    tickets TickestOnOrders[]
-}
-
-model TickestOnOrders {
-    Ticket   Ticket @relation(fields: [ticketId], references: [id])
-    ticketId String
-    Order    Order  @relation(fields: [orderId], references: [id])
-    orderId  String
-
-    @@id([ticketId, orderId])
 }
 
 enum Status {
