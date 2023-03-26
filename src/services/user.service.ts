@@ -1,4 +1,4 @@
-import { db, User, Order } from "../db";
+import { db, User, } from "../db";
 import { PrismaClient } from "@prisma/client";
 
 class UserService {
