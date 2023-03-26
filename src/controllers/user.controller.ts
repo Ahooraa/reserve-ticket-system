@@ -38,7 +38,7 @@ class UserController {
     }
   }
 
-  async getAllUsers(req: Request, res: Response, next: NextFunction) {
+  async getAllUsers(req: IAuthRequest, res: Response, next: NextFunction) {
     try {
       const users = await this.userService.getAllUsers();
       return res.json(users);
@@ -46,7 +46,7 @@ class UserController {
       next(error);
     }
   }
-  async getUser(req: Request, res: Response, next: NextFunction) {
+  async getUser(req: IAuthRequest, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       const user = await this.userService.getById(id);
@@ -56,7 +56,7 @@ class UserController {
     }
   }
 
-  async userExists(req: Request, res: Response, next: NextFunction) {
+  async userExists(req: IAuthRequest, res: Response, next: NextFunction) {
     try {
       const { phone } = req.params;
       if (await this.userService.userExists(phone)) {
@@ -86,7 +86,7 @@ class UserController {
     }
   }
 
-  async updateUser(req: Request, res: Response, next: NextFunction) {
+  async updateUser(req: IAuthRequest, res: Response, next: NextFunction) {
     try {
       const allowedFields = [
         "fname",
@@ -107,7 +107,7 @@ class UserController {
     }
   }
 
-  async deleteUser(req: Request, res: Response, next: NextFunction) {
+  async deleteUser(req: IAuthRequest, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       await this.userService.deleteUserById(id);

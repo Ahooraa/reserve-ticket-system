@@ -61,7 +61,7 @@ class TicketService {
       throw new Error("Unable to fetch ticket");
     }
   }
-  async getAllUsers(): Promise<Ticket[]> {
+  async getAllTickets(): Promise<Ticket[]> {
     try {
       return await this.database.ticket.findMany();
     } catch (error) {
