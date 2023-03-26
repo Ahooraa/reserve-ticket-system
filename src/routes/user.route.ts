@@ -1,18 +1,22 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { UserController } from "../controllers";
 import { checkError } from "../middlewares";
+import { IAuthRequest } from "../interfaces/auth.interface";
+import { param } from "express-validator";
+
 // import{userValidator} from '../validators'
 import {
   userCreateValidator,
   userLoginValidator,
   userUpdateValidator,
 } from "../middlewares/validators/user.validator";
-import { tokenAuthentication } from "../middlewares/auth";
+import { tokenAuthentication } from "../middlewares/";
 
 const userRouter = Router();
 const userController = new UserController();
 
 // userRouter.use('/user', )
+
 userRouter.post(
   "/auth",
   userLoginValidator,
@@ -42,8 +46,15 @@ userRouter.patch(
 userRouter.get(
   "/",
   tokenAuthentication,
-  (req: Request, res: Response, next: NextFunction) => {
+  (req: IAuthRequest, res: Response, next: NextFunction) => {
     userController.getAllUsers(req, res, next);
+  }
+);
+userRouter.get(
+  "/wallet",
+  tokenAuthentication,
+  (req: IAuthRequest, res: Response, next: NextFunction) => {
+    userController.getBalance(req, res, next);
   }
 );
 
@@ -57,9 +68,12 @@ userRouter.delete(
     userController.deleteUser(req, res, next);
   }
 );
-// in kar nemikone !!!
-userRouter.head(
-  "/:phone",
+userRouter.get(
+  "/check/:phone",
+  param("phone")
+    .isLength({ min: 5, max: 5 })
+    .withMessage("phone must be 5 characters"),
+  checkError,
   (req: Request, res: Response, next: NextFunction) => {
     userController.userExists(req, res, next);
   }

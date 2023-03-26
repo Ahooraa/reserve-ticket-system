@@ -80,7 +80,7 @@ const userLoginValidator = [
     .notEmpty()
     .withMessage("password is required")
     .isString()
-    .isLength({ min: 6 })
-    .withMessage("password must be at least 6 characters"),
+    .isLength({ min: 5 })
+    .withMessage("password must be at least 5 characters"),
 ];
 export { userCreateValidator, userUpdateValidator , userLoginValidator};

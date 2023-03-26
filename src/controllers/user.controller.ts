@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { pick } from "lodash";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
+import { IAuthRequest } from "../interfaces/auth.interface";
 
 class UserController {
   private userService: UserService;
@@ -57,10 +58,8 @@ class UserController {
 
   async userExists(req: Request, res: Response, next: NextFunction) {
     try {
-      console.log("in user exists controller");
-
       const { phone } = req.params;
-      if (this.userService.userExists(phone)) {
+      if (await this.userService.userExists(phone)) {
         return res.status(200).send("this user exists");
       } else {
         return res.status(404).send("user not found");
@@ -113,6 +112,18 @@ class UserController {
       const { id } = req.params;
       await this.userService.deleteUserById(id);
       return res.status(200).end(`user with id: ${id} deleted successfully`);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getBalance(req: IAuthRequest, res: Response, next: NextFunction) {
+    try {
+      const user = req.user;
+      console.log(user.fname);
+      return res
+        .status(200)
+        .send(`user ${user.fname} balance :  ${user.balance}`);
     } catch (error) {
       next(error);
     }

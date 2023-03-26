@@ -1,4 +1,4 @@
-import { db, User, Order, tickestOnOrders } from "../db";
+import { db, User, Order } from "../db";
 import { PrismaClient } from "@prisma/client";
 
 class UserService {
@@ -80,6 +80,15 @@ class UserService {
       throw new Error("Unable to delete user");
     }
   }
+
+  // async getBalance(phone:string): Promise<number> {
+  //   try {
+  //     const user = await this.getByPhone(phone);
+  //     return user.balance;
+  //   } catch (error) {
+  //     throw new Error("Unable to get user balance");
+  //   }
+  // }
 }
 
 export default UserService;
