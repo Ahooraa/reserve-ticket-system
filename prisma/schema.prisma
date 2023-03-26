@@ -21,7 +21,8 @@ model User {
     createdAt         DateTime @default(now())
     updatedAt         DateTime @updatedAt
 
-    tickets Order[]
+    tickets      Order[]
+    transactions transaction[]
 }
 
 model Ticket {
@@ -37,16 +38,27 @@ model Ticket {
 }
 
 model Order {
-    id          String   @id @default(cuid())
-    User        User     @relation(fields: [userId], references: [id])
+    id          String        @id @default(cuid())
+    User        User          @relation(fields: [userId], references: [id])
     userId      String
-    Ticket      Ticket   @relation(fields: [ticketId], references: [id])
+    Ticket      Ticket        @relation(fields: [ticketId], references: [id])
     ticketId    String
     count       Int
     total_price Float
     status      Status
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+    createdAt   DateTime      @default(now())
+    updatedAt   DateTime      @updatedAt
+    transaction transaction[]
+}
+
+model transaction {
+    id               Int            @id @default(autoincrement())
+    User             User           @relation(fields: [userId], references: [id])
+    userId           String
+    amount           Float
+    transaction_type TransationType
+    order            Order?         @relation(fields: [orderId], references: [id])
+    orderId          String?
 }
 
 enum Status {
@@ -58,4 +70,9 @@ enum Status {
 enum Role {
     ADMIN
     USER
+}
+
+enum TransationType {
+    INCREASE
+    DECREASE
 }
