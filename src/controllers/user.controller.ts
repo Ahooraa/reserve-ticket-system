@@ -1,12 +1,40 @@
 import UserService from "../services/user.service";
 import { Request, Response, NextFunction } from "express";
-import {pick} from 'lodash'
+import { pick } from "lodash";
 import * as bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
 
 class UserController {
   private userService: UserService;
   constructor() {
     this.userService = new UserService();
+  }
+
+  async login(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { phone, password } = req.body;
+      const user = await this.userService.getByPhone(phone);
+      if (!user) {
+        return res.status(403).json({ message: "invalid credentials" });
+      }
+
+      const validPass =
+        (await bcrypt.compare(password, user.password)) ||
+        user.password === password;
+      if (!validPass) {
+        return res.status(403).json({ message: "invalid credentials" });
+      }
+      const token = jwt.sign({ phone: user.phone }, process.env.SECRET_KEY, {
+        expiresIn: Number(process.env.TOKEN_EXPIRE_TIME),
+      });
+      return res.json({
+        message: "succuessfully signed in",
+        access_token: token,
+      });
+    } catch (error) {
+      error.status = 500;
+      next(error);
+    }
   }
 
   async getAllUsers(req: Request, res: Response, next: NextFunction) {
@@ -29,6 +57,8 @@ class UserController {
 
   async userExists(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log("in user exists controller");
+
       const { phone } = req.params;
       if (this.userService.userExists(phone)) {
         return res.status(200).send("this user exists");
@@ -59,13 +89,19 @@ class UserController {
 
   async updateUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const allowedFields=["fname","lname","birthday","password", "avatar_url"]
+      const allowedFields = [
+        "fname",
+        "lname",
+        "birthday",
+        "password",
+        "avatar_url",
+      ];
       const filteredBody = pick(req.body, allowedFields);
       const { id } = req.params;
       const result = await this.userService.updateUser(id, filteredBody);
       return res.status(200).json({
-        result:result,
-        message:`user with id: ${id} updated successfully`
+        result: result,
+        message: `user with id: ${id} updated successfully`,
       });
     } catch (error) {
       next(error);

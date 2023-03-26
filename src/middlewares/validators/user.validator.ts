@@ -65,6 +65,22 @@ const userUpdateValidator = [
     .withMessage("password must be at least 6 characters"),
   body("avatar_url").optional({ nullable: true }).isString(),
 
-  body("birthday").optional({nullable:true}),
+  body("birthday").optional({ nullable: true }),
 ];
-export { userCreateValidator , userUpdateValidator};
+
+const userLoginValidator = [
+  body("phone")
+    .notEmpty()
+    .withMessage("phone is required")
+    .isString()
+    .isLength({ min: 5, max: 5 })
+    .withMessage("phone must be 5 characters"),
+
+  body("password")
+    .notEmpty()
+    .withMessage("password is required")
+    .isString()
+    .isLength({ min: 6 })
+    .withMessage("password must be at least 6 characters"),
+];
+export { userCreateValidator, userUpdateValidator , userLoginValidator};

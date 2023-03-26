@@ -4,14 +4,23 @@ import { checkError } from "../middlewares";
 // import{userValidator} from '../validators'
 import {
   userCreateValidator,
+  userLoginValidator,
   userUpdateValidator,
 } from "../middlewares/validators/user.validator";
-// import {tokenAuthentication, adminCheck} from '../middlewares/auth'
+import { tokenAuthentication } from "../middlewares/auth";
 
 const userRouter = Router();
 const userController = new UserController();
 
 // userRouter.use('/user', )
+userRouter.post(
+  "/auth",
+  userLoginValidator,
+  checkError,
+  (req: Request, res: Response, next: NextFunction) => {
+    userController.login(req, res, next);
+  }
+);
 
 userRouter.post(
   "/",
@@ -30,9 +39,13 @@ userRouter.patch(
   }
 );
 
-userRouter.get("/", (req: Request, res: Response, next: NextFunction) => {
-  userController.getAllUsers(req, res, next);
-});
+userRouter.get(
+  "/",
+  tokenAuthentication,
+  (req: Request, res: Response, next: NextFunction) => {
+    userController.getAllUsers(req, res, next);
+  }
+);
 
 userRouter.get("/:id", (req: Request, res: Response, next: NextFunction) => {
   userController.getUser(req, res, next);
@@ -44,7 +57,7 @@ userRouter.delete(
     userController.deleteUser(req, res, next);
   }
 );
-
+// in kar nemikone !!!
 userRouter.head(
   "/:phone",
   (req: Request, res: Response, next: NextFunction) => {
