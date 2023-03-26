@@ -37,7 +37,7 @@ class UserService {
   }
   async userExists(phone: string): Promise<Boolean> {
     try {
-      const user = await db.user.findUnique({ where: { phone } });
+      const user = await this.database.user.findUnique({ where: { phone } });
       if (!user) {
         return false;
       } else {
@@ -50,7 +50,7 @@ class UserService {
 
   async createUser(data) {
     try {
-      const user = await db.user.create({
+      const user = await this.database.user.create({
         data,
       });
       return user.id;
@@ -61,7 +61,7 @@ class UserService {
 
   async updateUser(id, data) {
     try {
-      const result = await db.user.update({
+      const result = await this.database.user.update({
         where: { id },
         data,
       });
@@ -73,7 +73,7 @@ class UserService {
 
   async deleteUserById(id: string): Promise<void> {
     try {
-      await db.user.delete({
+      await this.database.user.delete({
         where: { id },
       });
     } catch (error) {
@@ -81,14 +81,30 @@ class UserService {
     }
   }
 
-  // async getBalance(phone:string): Promise<number> {
-  //   try {
-  //     const user = await this.getByPhone(phone);
-  //     return user.balance;
-  //   } catch (error) {
-  //     throw new Error("Unable to get user balance");
-  //   }
-  // }
+  async changeBalance(
+    user: User,
+    transactionType: String,
+    amount: number
+  ): Promise<number> {
+    try {
+      let newBalance;
+      if (transactionType === "INCREASE") {
+        newBalance = user.balance + amount;
+      } else if (transactionType === "DECREASE") {
+        if (user.balance < amount) {
+          throw new Error("sorry, user balance is not enough");
+        }
+        newBalance = user.balance - amount;
+      }
+      const updatedUser = await this.database.user.update({
+        where: { id: user.id },
+        data: { balance: newBalance },
+      });
+      return updatedUser.balance;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }
 
 export default UserService;

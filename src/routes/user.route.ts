@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { UserController } from "../controllers";
+import { UserController , TransactionController} from "../controllers";
 import { checkError } from "../middlewares";
 import { IAuthRequest } from "../interfaces/auth.interface";
 import { param } from "express-validator";
@@ -10,10 +10,12 @@ import {
   userLoginValidator,
   userUpdateValidator,
 } from "../middlewares/validators/user.validator";
+import { increasBalanceValidtor } from "../middlewares/validators/transaction.validator";
 import { tokenAuthentication } from "../middlewares/";
 
 const userRouter = Router();
 const userController = new UserController();
+const transactionController = new TransactionController();
 
 // userRouter.use('/user', )
 
@@ -56,6 +58,14 @@ userRouter.get(
   tokenAuthentication,
   (req: IAuthRequest, res: Response, next: NextFunction) => {
     userController.getBalance(req, res, next);
+  }
+);
+userRouter.post(
+  "/wallet",
+  tokenAuthentication,
+  increasBalanceValidtor, checkError,
+  (req: IAuthRequest, res: Response, next: NextFunction) => {
+    transactionController.increaseUserBalance(req, res, next);
   }
 );
 
