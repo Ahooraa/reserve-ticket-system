@@ -30,9 +30,9 @@ class UserService {
     try {
       const user = await db.user.findUnique({ where: { phone } });
       if (!user) {
-        return true;
-      } else {
         return false;
+      } else {
+        return true;
       }
     } catch (error) {
       throw new Error(error.message);
@@ -49,6 +49,19 @@ class UserService {
       throw new Error(error.message);
     }
   }
+
+  async updateUser(id, data) {
+    try {
+      const result = await db.user.update({
+        where: { id },
+        data,
+      });
+      return result;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
   async deleteUserById(id: string): Promise<void> {
     try {
       await db.user.delete({

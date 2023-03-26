@@ -1,5 +1,6 @@
 import UserService from "../services/user.service";
 import { Request, Response, NextFunction } from "express";
+import {pick} from 'lodash'
 import * as bcrypt from "bcrypt";
 
 class UserController {
@@ -56,13 +57,26 @@ class UserController {
     }
   }
 
+  async updateUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const allowedFields=["fname","lname","birthday","password", "avatar_url"]
+      const filteredBody = pick(req.body, allowedFields);
+      const { id } = req.params;
+      const result = await this.userService.updateUser(id, filteredBody);
+      return res.status(200).json({
+        result:result,
+        message:`user with id: ${id} updated successfully`
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       await this.userService.deleteUserById(id);
-      return res
-        .status(200)
-        .end(`user with phone number ${id} deleted successfully`);
+      return res.status(200).end(`user with id: ${id} deleted successfully`);
     } catch (error) {
       next(error);
     }
