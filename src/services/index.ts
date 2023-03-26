@@ -1,2 +1,3 @@
 import UserService from "./user.service";
-export {UserService}
+import TransactionService from "./transaction.service";
+export {UserService, TransactionService}

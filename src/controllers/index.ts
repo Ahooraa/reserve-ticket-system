@@ -1,2 +1,3 @@
 import UserController from "./user.controller";
-export {UserController}
+import TransactionController from "./transaction.controller";
+export {UserController, TransactionController}
