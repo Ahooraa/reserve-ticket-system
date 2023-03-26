@@ -36,6 +36,7 @@ userRouter.post(
 );
 userRouter.patch(
   "/:id",
+  tokenAuthentication,
   userUpdateValidator,
   checkError,
   (req: Request, res: Response, next: NextFunction) => {
@@ -58,18 +59,24 @@ userRouter.get(
   }
 );
 
-userRouter.get("/:id", (req: Request, res: Response, next: NextFunction) => {
-  userController.getUser(req, res, next);
-});
+userRouter.get(
+  "/:id",
+  tokenAuthentication,
+  (req: Request, res: Response, next: NextFunction) => {
+    userController.getUser(req, res, next);
+  }
+);
 
 userRouter.delete(
   "/:id/delete",
+  tokenAuthentication,
   (req: Request, res: Response, next: NextFunction) => {
     userController.deleteUser(req, res, next);
   }
 );
 userRouter.get(
   "/check/:phone",
+  tokenAuthentication,
   param("phone")
     .isLength({ min: 5, max: 5 })
     .withMessage("phone must be 5 characters"),
