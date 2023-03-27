@@ -12,7 +12,11 @@ class TransactionService {
 
   async increaseBalance(user: User, amount: number) {
     const transType = "INCREASE";
-    const newBalance=await this.userSerivce.changeBalance(user, transType, amount);
+    const newBalance = await this.userSerivce.changeBalance(
+      user,
+      transType,
+      amount
+    );
     try {
       const transaction = await this.database.transaction.create({
         data: {
@@ -21,7 +25,7 @@ class TransactionService {
           transaction_type: transType,
         },
       });
-      return {transaction, newBalance}
+      return { transaction, newBalance };
     } catch (error) {
       throw new Error("unable to increase balance");
     }
