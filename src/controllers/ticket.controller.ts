@@ -30,7 +30,7 @@ class TicketController {
     }
   }
   //request type should be IAdminRequest
-  async createTicket(req: Request, res: Response, next: NextFunction) {
+  async createTicket(req: IAuthRequest, res: Response, next: NextFunction) {
     try {
       const ticketId = await this.ticketService.create({
         ...req.body,
@@ -42,7 +42,29 @@ class TicketController {
       next(error);
     }
   }
-  async deleteTicket(req: Request, res: Response, next: NextFunction) {
+
+  async updateTicket(req: IAuthRequest, res: Response, next: NextFunction) {
+    try {
+      const allowedFields = [
+        "from_location",
+        "to_location",
+        "deparutre_date",
+        "arrival_date",
+        "unit_price",
+        "stock",
+      ];
+      const filteredBody = pick(req.body, allowedFields);
+      const { id } = req.params;
+      const result = await this.ticketService.updateTicket(id, filteredBody);
+      return res.status(200).json({
+        result: result,
+        message: `ticket with id: ${id} updated successfully`,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async deleteTicket(req: IAuthRequest, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       await this.ticketService.deleteTicketById(id);

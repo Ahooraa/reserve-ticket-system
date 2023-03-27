@@ -34,6 +34,27 @@ class TicketValidator {
       .isInt()
       .withMessage("stock must have integer format"),
   ];
+
+  ticketUpdateValidator = [
+    body("from_location").optional({ nullable: true }).isString(),
+    body("to_location").optional({ nullable: true }).isString(),
+    body("departure_date")
+      .optional({ nullable: true })
+      .isISO8601()
+      .withMessage("departure date must have ISO8601 date format"),
+    body("arrival_date")
+      .optional({ nullable: true })
+      .isISO8601()
+      .withMessage("arrival date must have ISO8601 date format"),
+    body("unit_price")
+      .optional({ nullable: true })
+      .isFloat()
+      .withMessage("unit price must have float format"),
+    body("stock")
+      .optional({ nullable: true })
+      .isInt()
+      .withMessage("stock must have Integer format"),
+  ];
 }
 
 export default TicketValidator;
