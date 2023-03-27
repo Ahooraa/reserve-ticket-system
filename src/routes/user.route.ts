@@ -1,27 +1,20 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { UserController , TransactionController} from "../controllers";
+import { UserController, TransactionController } from "../controllers";
 import { checkError } from "../middlewares";
 import { IAuthRequest } from "../interfaces/auth.interface";
 import { param } from "express-validator";
-
-// import{userValidator} from '../validators'
-import {
-  userCreateValidator,
-  userLoginValidator,
-  userUpdateValidator,
-} from "../middlewares/validators/user.validator";
-import { increasBalanceValidtor } from "../middlewares/validators/transaction.validator";
-import { tokenAuthentication } from "../middlewares/";
+import { UserValidator, TransactionValidator } from "../middlewares/validators";
+import { tokenAuthentication ,adminCheck} from "../middlewares/";
 
 const userRouter = Router();
 const userController = new UserController();
 const transactionController = new TransactionController();
-
-// userRouter.use('/user', )
+const userValidator = new UserValidator();
+const transactionValidator = new TransactionValidator();
 
 userRouter.post(
   "/auth",
-  userLoginValidator,
+  userValidator.userLoginValidator,
   checkError,
   (req: Request, res: Response, next: NextFunction) => {
     userController.login(req, res, next);
@@ -30,25 +23,27 @@ userRouter.post(
 
 userRouter.post(
   "/",
-  userCreateValidator,
+  userValidator.userCreateValidator,
   checkError,
   (req: Request, res: Response, next: NextFunction) => {
     userController.createUser(req, res, next);
   }
 );
+
 userRouter.patch(
   "/:id",
   tokenAuthentication,
-  userUpdateValidator,
+  userValidator.userUpdateValidator,
   checkError,
   (req: Request, res: Response, next: NextFunction) => {
     userController.updateUser(req, res, next);
   }
 );
-
+//request type should be IAdminRequest
 userRouter.get(
   "/",
   tokenAuthentication,
+  adminCheck,
   (req: IAuthRequest, res: Response, next: NextFunction) => {
     userController.getAllUsers(req, res, next);
   }
@@ -63,7 +58,8 @@ userRouter.get(
 userRouter.post(
   "/wallet",
   tokenAuthentication,
-  increasBalanceValidtor, checkError,
+  transactionValidator.increasBalanceValidtor,
+  checkError,
   (req: IAuthRequest, res: Response, next: NextFunction) => {
     transactionController.increaseUserBalance(req, res, next);
   }

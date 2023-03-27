@@ -34,4 +34,18 @@ const tokenAuthentication = async (
     });
   }
 };
-export { tokenAuthentication };
+const adminCheck = async (req:IAuthRequest, res, next) => {
+  if (!req.user) {
+    throw new Error(
+      "in middleware hatman bayad bad az tokenAuthentication biad!"
+    );
+  }
+  if (req.user.role === "ADMIN") {
+    next();
+  } else {
+    const error = new Error("ejazeh nadari!");
+    res.status(403)
+    next(error);
+  }
+};
+export { tokenAuthentication , adminCheck } ;
