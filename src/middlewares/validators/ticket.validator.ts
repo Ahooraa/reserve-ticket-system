@@ -55,6 +55,13 @@ class TicketValidator {
       .isInt()
       .withMessage("stock must have Integer format"),
   ];
+  deleteManyValidator = [
+    body("ticktIdsToDelete")
+      .notEmpty()
+      .withMessage("ticktIdsToDelete must be specified")
+      .isArray()
+      .withMessage("ticktIdsToDelete must be an array"),
+  ];
 }
 
 export default TicketValidator;

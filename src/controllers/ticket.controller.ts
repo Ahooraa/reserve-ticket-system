@@ -73,7 +73,26 @@ class TicketController {
       next(error);
     }
   }
-  async deleteManyTickets(req: Request, res: Response, next: NextFunction) {}
+  async deleteManyTickets(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { ticktIdsToDelete } = req.body;
+      const result = await this.ticketService.deleteManyTickets(
+        ticktIdsToDelete
+      );
+      let message;
+        if (result["count"] ===0){
+          message="there are no tickets with these ids in the database"
+        }else{
+          message=`thikets with id: ${ticktIdsToDelete} deleted successfully`
+        }
+      return res.status(200).json({
+        result: result ,
+        message
+      })}
+     catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default TicketController;

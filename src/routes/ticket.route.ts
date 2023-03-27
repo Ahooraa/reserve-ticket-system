@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { checkError } from "../middlewares";
 import { IAuthRequest } from "../interfaces/auth.interface";
-import { tokenAuthentication ,adminCheck} from "../middlewares/";
+import { tokenAuthentication, adminCheck } from "../middlewares/";
 import { TicketController } from "../controllers";
 import { TicketValidator } from "../middlewares/validators";
 
@@ -23,7 +23,7 @@ ticketRouter.get(
     ticketController.getTicket(req, res, next);
   }
 );
-//request type should be IAdminRequest
+//request type should have admin check`
 ticketRouter.post(
   "/",
   tokenAuthentication,
@@ -34,7 +34,7 @@ ticketRouter.post(
     ticketController.createTicket(req, res, next);
   }
 );
-//request type should be IAdminRequest`
+//request type should have admin check`
 ticketRouter.patch(
   "/:id",
   tokenAuthentication,
@@ -43,6 +43,26 @@ ticketRouter.patch(
   checkError,
   (req: IAuthRequest, res: Response, next: NextFunction) => {
     ticketController.updateTicket(req, res, next);
+  }
+);
+//request type should have admin check`
+ticketRouter.delete(
+  "/",
+  tokenAuthentication,
+  adminCheck,
+  ticketValidator.deleteManyValidator,
+  checkError,
+  (req: IAuthRequest, res: Response, next: NextFunction) => {
+    ticketController.deleteManyTickets(req, res, next);
+  }
+);
+
+ticketRouter.delete(
+  "/:id",
+  tokenAuthentication,
+  adminCheck,
+  (req: IAuthRequest, res: Response, next: NextFunction) => {
+    ticketController.deleteTicket(req, res, next);
   }
 );
 
