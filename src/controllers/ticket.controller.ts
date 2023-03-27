@@ -21,6 +21,9 @@ class TicketController {
     try {
       const { id } = req.params;
       const ticket = await this.ticketService.getById(id);
+      if (!ticket) {
+        throw new Error("Ticket not found");
+      }
       return res.json(ticket);
     } catch (error) {
       next(error);
