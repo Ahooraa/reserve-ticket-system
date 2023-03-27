@@ -12,15 +12,15 @@ class UserValidator {
       .notEmpty()
       .withMessage("fname or lname is required")
       .isString()
-      .isLength({ min: 4 })
-      .withMessage("at least 4 characters required"),
+      .isLength({ min: 3 })
+      .withMessage("at least 3 characters required"),
 
     body("lname")
       .notEmpty()
       .withMessage("fname or lname is required")
       .isString()
-      .isLength({ min: 4 })
-      .withMessage("at least 4 characters required"),
+      .isLength({ min: 3 })
+      .withMessage("at least 3 characters required"),
 
     check("phone")
       .notEmpty()
@@ -53,14 +53,14 @@ class UserValidator {
     body("fname")
       .optional({ nullable: true })
       .isString()
-      .isLength({ min: 4 })
-      .withMessage("at least 4 characters required"),
+      .isLength({ min: 3 })
+      .withMessage("at least 3 characters required"),
 
     body("lname")
       .optional({ nullable: true })
       .isString()
-      .isLength({ min: 4 })
-      .withMessage("at least 4 characters required"),
+      .isLength({ min: 3 })
+      .withMessage("at least 3 characters required"),
 
     body("password")
       .optional()

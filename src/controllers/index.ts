@@ -1,3 +1,4 @@
 import UserController from "./user.controller";
 import TransactionController from "./transaction.controller";
-export {UserController, TransactionController}
+import TicketController from "./ticket.controller";
+export { UserController, TransactionController, TicketController };

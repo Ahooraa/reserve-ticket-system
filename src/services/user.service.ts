@@ -1,4 +1,4 @@
-import { db, User, } from "../db";
+import { db, User } from "../db";
 import { PrismaClient } from "@prisma/client";
 
 class UserService {
@@ -11,7 +11,6 @@ class UserService {
     try {
       return await this.database.user.findMany();
     } catch (error) {
-      error.status = 500;
       throw new Error("Unable to fetch users");
     }
   }
