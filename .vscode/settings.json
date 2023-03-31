@@ -3,7 +3,7 @@
     {
       "previewLimit": 50,
       "server": "localhost",
-      "port": 5434,
+      "port": 5435,
       "driver": "PostgreSQL",
       "name": "reserve-ticket",
       "database": "reserveTicketDB",

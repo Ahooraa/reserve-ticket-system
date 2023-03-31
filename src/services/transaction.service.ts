@@ -6,7 +6,7 @@ class TransactionService {
   private database: PrismaClient;
   private userSerivce: UserService;
   constructor() {
-    this.database = db;
+    this.database = db; 
     this.userSerivce = new UserService();
   }
 

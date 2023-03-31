@@ -1,3 +1,4 @@
+import { errorMonitor } from "events";
 import { db, Ticket } from "../db";
 import { PrismaClient } from "@prisma/client";
 
@@ -69,6 +70,22 @@ class TicketService {
       throw new Error("Unable to fetch tickets");
     }
   }
+
+  async ticketExists(ticketId: string): Promise<Boolean> {
+    try {
+      const ticket = await this.database.ticket.findUnique({
+        where: { id: ticketId },
+      });
+      if (!ticket) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+  
 }
 
 export default TicketService;

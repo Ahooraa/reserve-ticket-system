@@ -10,6 +10,7 @@ async function main() {
         phone: "11111",
         password: "12345",
         birthday: new Date("2001-09-15"),
+        role: "ADMIN"
       },
       {
         fname: "sobhan",

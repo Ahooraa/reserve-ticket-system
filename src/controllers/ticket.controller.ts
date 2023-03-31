@@ -9,7 +9,7 @@ class TicketController {
     this.ticketService = new TicketService();
   }
 
-  async getAllTickets(req: IAuthRequest, res: Response, next: NextFunction) {
+  async getAllTickets(req: IAuthRequest, res: Response, next: NextFunction):Promise<Response> {
     try {
       const tickets = await this.ticketService.getAllTickets();
       return res.json(tickets);
@@ -17,7 +17,7 @@ class TicketController {
       next(error);
     }
   }
-  async getTicket(req: IAuthRequest, res: Response, next: NextFunction) {
+  async getTicket(req: IAuthRequest, res: Response, next: NextFunction):Promise<Response>  {
     try {
       const { id } = req.params;
       const ticket = await this.ticketService.getById(id);
@@ -64,7 +64,7 @@ class TicketController {
       next(error);
     }
   }
-  async deleteTicket(req: IAuthRequest, res: Response, next: NextFunction) {
+  async deleteTicket(req: IAuthRequest, res: Response, next: NextFunction):Promise<Response> {
     try {
       const { id } = req.params;
       await this.ticketService.deleteTicketById(id);
