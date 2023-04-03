@@ -30,15 +30,43 @@ class OrderController {
         ticketsToOrderList.push({ ticket, count: ticketOrderInfo.count });
       }
     }
+    console.log(user.id);
 
     const order = await this.orderService.createOrder(
       user.id,
       ticketsToOrderList
     );
     return res.status(200).json({
-      message: `an order with ID ${order} has been created`,
+      message: `an order with ID ${order.id} has been created`,
       order: await this.orderService.getOrderById(order.id),
     });
+  }
+
+  async updateOrder(req: IAuthRequest, res: Response, next: NextFunction) {
+    try {
+      const allowedFields = ["status", "total_price"];
+      const filteredBody = pick(req.body, allowedFields);
+      const { id } = req.params;
+      const result = await this.orderService.updateOrder(id, filteredBody);
+      return res.status(200).json({
+        result: result,
+        message: `order with id: ${id} updated successfully`,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async getOrder(req: IAuthRequest, res: Response, next: NextFunction):Promise<Response>  {
+    try {
+      const { id } = req.params;
+      const order = await this.orderService.getOrderById(id)
+      if (!order) {
+        throw new Error("Ticket not found");
+      }
+      return res.json(order);
+    } catch (error) {
+      next(error);
+    }
   }
   async deleteAllOrderRecords(
     req: IAuthRequest,

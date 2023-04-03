@@ -49,15 +49,9 @@ class OrderService {
           price: count * ticket.unit_price,
         },
       });
-
-      // console.log(order)
-      const updatedOrder = await this.increaseOrderTotalPrice(
-        order,
-        ticketOrder.price
-      );
       return ticketOrder;
     } catch (error) {
-      throw new Error("Unable to create ticket order");
+      throw new Error(error.message);
     }
   }
 
@@ -74,12 +68,30 @@ class OrderService {
         },
       });
 
+      let totalTicketOrdersPrice = 0;
       for (const ticketOrderInfo of ticketstoOrder) {
-        await this.createTicketOrder(ticketOrderInfo, order);
+        const ticketOrder = await this.createTicketOrder(
+          ticketOrderInfo,
+          order
+        );
+        totalTicketOrdersPrice += ticketOrder.price;
       }
+      await this.updateOrder(order.id, { total_price: totalTicketOrdersPrice });
       return order;
     } catch (error) {
-      throw new Error("unable to create order");
+      throw new Error(error.message);
+    }
+  }
+
+  async updateOrder(orderId: string, data): Promise<Order> {
+    try {
+      const result = await this.database.order.update({
+        where: { id: orderId },
+        data,
+      });
+      return result;
+    } catch (error) {
+      throw new Error(error.message);
     }
   }
   async getOrderById(orderId: string): Promise<Order> {
