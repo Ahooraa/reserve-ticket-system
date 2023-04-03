@@ -21,7 +21,7 @@ class OrderController {
     this.transactionService = new TransactionService();
   }
 
-  async createOrder(req: IAuthRequest, res: Response, next: NextFunction) {
+  async reserveOrder(req: IAuthRequest, res: Response, next: NextFunction) {
     const user = req.user;
     const { ticketOrdersInfoList } = req.body; //includes a list of objects like this : {ticketId, count}
 
@@ -72,6 +72,8 @@ class OrderController {
     try {
       const user = req.user;
       const { id } = req.params;
+      console.log("in pay order controller");
+
       const order = await this.orderService.getOrderById(id);
       const paidTransaction = await this.transactionService.decreaseBalance(
         user,
@@ -94,29 +96,38 @@ class OrderController {
 
   async cancelOrder(req: IAuthRequest, res: Response, next: NextFunction) {
     try {
-      const user=req.user;
-      const {id} = req.params
+      const user = req.user;
+      const { id } = req.params;
       const order = await this.orderService.getOrderById(id);
-      const deletedTicketOrders = await this.orderService.deleteAllTicketOrdersOfAnOrder(order.id)
 
-      const returnMoneyTransaction = await this.transactionService.increaseBalance(user,order.total_price, order.id);
-      if(!returnMoneyTransaction){
-        throw new Error("failed to return money of canceled order")
-      }else{
-        const canceledOrder=await this.orderService.updateOrder(id,{status: "CANCELED"} )
-        return res.status(202).json({
-          message: `user with id: ${user.id} canceled order : ${canceledOrder.id}`,
-          canceledOrder,
-          deletedTicketOrders
-        })
-
+      if (order.status === "CANCELED") {
+        throw new Error("order is already canceled");
+      }
+      const deletedTicketOrders =
+        await this.orderService.deleteAllTicketOrdersOfAnOrder(order.id);
+      if (order.status === "PAID") {
+        const returnMoneyTransaction =
+          await this.transactionService.increaseBalance(
+            user,
+            order.total_price,
+            order.id
+          );
+        if (!returnMoneyTransaction) {
+          throw new Error("failed to return money of canceled order");
+        }
       }
 
-      
+      const canceledOrder = await this.orderService.updateOrder(id, {
+        status: "CANCELED",
+      });
+      return res.status(202).json({
+        message: `user with id: ${user.id} canceled order : ${canceledOrder.id}`,
+        canceledOrder,
+        deletedTicketOrders,
+      });
+    } catch (error) {
+      next(error);
     }
-     catch (error) {
-      next(error)
-     }
   }
   async getOrder(
     req: IAuthRequest,

@@ -11,7 +11,7 @@ orderRouter.post(
   "/",
   tokenAuthentication,
   (req: IAuthRequest, res: Response, next: NextFunction) => {
-    orderController.createOrder(req, res, next);
+    orderController.reserveOrder(req, res, next);
   }
 );
 
