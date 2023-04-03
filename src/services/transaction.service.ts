@@ -30,6 +30,28 @@ class TransactionService {
       throw new Error("unable to increase balance");
     }
   }
+
+  async decreaseBalance(user: User, amount: number, orderId:string) {
+    const transType = "DECREASE";
+    const newBalance = await this.userSerivce.changeBalance(
+      user,
+      transType,
+      amount
+    );
+    try {
+      const transaction = await this.database.transaction.create({
+        data: {
+          userId: user.id,
+          amount: amount,
+          transaction_type: transType,
+          orderId:orderId
+        },
+      });
+      return { transaction, newBalance };
+    } catch (error) {
+      throw new Error("unable to decrease balance");
+    }
+  }
 }
 
 export default TransactionService;

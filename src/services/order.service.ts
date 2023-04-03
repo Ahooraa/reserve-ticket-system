@@ -94,6 +94,14 @@ class OrderService {
       throw new Error(error.message);
     }
   }
+  async submitOrder(orderId: string): Promise<Order> {
+    try {
+      return await this.updateOrder(orderId, { status: "PAID" });
+    } catch (error) {
+      throw new Error("unable to submit order");
+    }
+  }
+
   async getOrderById(orderId: string): Promise<Order> {
     try {
       return await this.database.order.findUnique({
@@ -106,6 +114,14 @@ class OrderService {
       });
     } catch (error) {
       throw new Error("Unable to fetch order");
+    }
+  }
+  async getAllOrders(): Promise<Order[]> {
+    try {
+      return await this.database.order.findMany();
+    } catch (error) {
+      error.status = 500;
+      throw new Error("Unable to fetch orders");
     }
   }
   async deleteManyOrderRecords() {

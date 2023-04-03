@@ -15,12 +15,28 @@ orderRouter.post(
   }
 );
 
-orderRouter.get(
-    "/:id",
+orderRouter.patch(
+    "/:id/pay",
+    tokenAuthentication,
     (req: IAuthRequest, res: Response, next: NextFunction) => {
-      orderController.getOrder(req, res, next);
+      orderController.payOrder(req, res, next);
     }
   );
+
+
+orderRouter.get(
+  "/",
+//   tokenAuthentication,
+  (req: IAuthRequest, res: Response, next: NextFunction) => {
+    orderController.getAllOrders(req, res, next);
+  }
+);
+orderRouter.get(
+  "/:id",
+  (req: IAuthRequest, res: Response, next: NextFunction) => {
+    orderController.getOrder(req, res, next);
+  }
+);
 
 orderRouter.delete(
   "/all",

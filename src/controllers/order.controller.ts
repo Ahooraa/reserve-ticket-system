@@ -1,17 +1,24 @@
 import { Request, Response, NextFunction } from "express";
 import { pick } from "lodash";
 import { IAuthRequest } from "../interfaces/auth.interface";
-import { OrderService, UserService, TicketService } from "../services";
+import {
+  OrderService,
+  UserService,
+  TicketService,
+  TransactionService,
+} from "../services";
 import TicketOrder from "../interfaces/ticketOrder.type";
 
 class OrderController {
   private orderService: OrderService;
   private ticketService: TicketService;
+  private transactionService: TransactionService;
   private userService: UserService;
   constructor() {
     this.orderService = new OrderService();
     this.userService = new UserService();
     this.ticketService = new TicketService();
+    this.transactionService = new TransactionService();
   }
 
   async createOrder(req: IAuthRequest, res: Response, next: NextFunction) {
@@ -56,14 +63,58 @@ class OrderController {
       next(error);
     }
   }
-  async getOrder(req: IAuthRequest, res: Response, next: NextFunction):Promise<Response>  {
+
+  async payOrder(
+    req: IAuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response> {
+    try {
+      const user = req.user;
+      const { id } = req.params;
+      const order = await this.orderService.getOrderById(id);
+      const paidTransaction = await this.transactionService.decreaseBalance(
+        user,
+        order.total_price,
+        order.id
+      );
+      if (!paidTransaction) {
+        throw new Error("faild to pay order");
+      } else {
+        const paidOrder = await this.orderService.submitOrder(id);
+        return res.status(200).json({
+          message: `order with id: ${id} was paid by user: ${user.id}`,
+          order: paidOrder,
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+  async getOrder(
+    req: IAuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response> {
     try {
       const { id } = req.params;
-      const order = await this.orderService.getOrderById(id)
+      const order = await this.orderService.getOrderById(id);
       if (!order) {
         throw new Error("Ticket not found");
       }
       return res.json(order);
+    } catch (error) {
+      next(error);
+    }
+  }
+  async getAllOrders(
+    req: IAuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response> {
+    try {
+      const orders = await this.orderService.getAllOrders();
+      return res.json(orders);
     } catch (error) {
       next(error);
     }
