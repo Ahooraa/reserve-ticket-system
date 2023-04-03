@@ -6,11 +6,11 @@ class TransactionService {
   private database: PrismaClient;
   private userSerivce: UserService;
   constructor() {
-    this.database = db; 
+    this.database = db;
     this.userSerivce = new UserService();
   }
 
-  async increaseBalance(user: User, amount: number) {
+  async increaseBalance(user: User, amount: number, orderId?: string) {
     const transType = "INCREASE";
     const newBalance = await this.userSerivce.changeBalance(
       user,
@@ -23,6 +23,7 @@ class TransactionService {
           userId: user.id,
           amount: amount,
           transaction_type: transType,
+          orderId: orderId,
         },
       });
       return { transaction, newBalance };
@@ -31,7 +32,7 @@ class TransactionService {
     }
   }
 
-  async decreaseBalance(user: User, amount: number, orderId:string) {
+  async decreaseBalance(user: User, amount: number, orderId: string) {
     const transType = "DECREASE";
     const newBalance = await this.userSerivce.changeBalance(
       user,
@@ -44,7 +45,7 @@ class TransactionService {
           userId: user.id,
           amount: amount,
           transaction_type: transType,
-          orderId:orderId
+          orderId: orderId,
         },
       });
       return { transaction, newBalance };

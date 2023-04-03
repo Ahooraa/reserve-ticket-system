@@ -16,17 +16,24 @@ orderRouter.post(
 );
 
 orderRouter.patch(
-    "/:id/pay",
-    tokenAuthentication,
-    (req: IAuthRequest, res: Response, next: NextFunction) => {
-      orderController.payOrder(req, res, next);
-    }
-  );
+  "/:id/pay",
+  tokenAuthentication,
+  (req: IAuthRequest, res: Response, next: NextFunction) => {
+    orderController.payOrder(req, res, next);
+  }
+);
 
+orderRouter.patch(
+  "/:id/cancel",
+  tokenAuthentication,
+  (req: IAuthRequest, res: Response, next: NextFunction) => {
+    orderController.cancelOrder(req, res, next);
+  }
+);
 
 orderRouter.get(
   "/",
-//   tokenAuthentication,
+  //   tokenAuthentication,
   (req: IAuthRequest, res: Response, next: NextFunction) => {
     orderController.getAllOrders(req, res, next);
   }

@@ -24,6 +24,31 @@ class OrderService {
       },
     });
   }
+  async deleteTicketOrder(id: string): Promise<void> {
+    try {
+      await this.database.orderOnTickets.delete({
+        where: {
+          id,
+        },
+      });
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+  async deleteAllTicketOrdersOfAnOrder(orderId: string) {
+    const ticketOrders = await this.database.orderOnTickets.findMany({
+      where: { orderId },
+    });
+    for (const ticketOrder of ticketOrders) {
+      const ticket = await this.ticketService.getById(ticketOrder.ticketId);
+      await this.ticketService.updateTicket(ticket.id, {
+        stock: ticket.stock + ticketOrder.count,
+      });
+    }
+    return await this.database.orderOnTickets.deleteMany({
+      where: { orderId },
+    });
+  }
 
   async createTicketOrder(
     ticketOrderInfo: TicketOrder,
@@ -85,11 +110,10 @@ class OrderService {
 
   async updateOrder(orderId: string, data): Promise<Order> {
     try {
-      const result = await this.database.order.update({
+      return await this.database.order.update({
         where: { id: orderId },
         data,
       });
-      return result;
     } catch (error) {
       throw new Error(error.message);
     }
